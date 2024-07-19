@@ -1,0 +1,31 @@
+*{
+    --light-bg:rgb(176, 116, 245);
+}
+.ViewTodoContainer{
+    padding: 100px;
+}
+.inner-container{
+    border: 8px solid var(--light-bg);
+}
+.todoItem{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.todoItem input{
+    cursor: pointer;
+}
+.todoItem h3{
+    width: 80%;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+.todoItem h2{
+    cursor: pointer;
+}
+.todoItem h2:hover{
+    color: red;
+}

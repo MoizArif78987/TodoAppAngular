@@ -1,0 +1,9 @@
+<div class="AddTodoForm">
+
+    <form [formGroup]="todoForm" (ngSubmit)="OnAddClick()">
+        <input type="text" placeholder="What will you do today?" formControlName="todo" >
+        <button type="submit">Add</button>
+    </form>
+    <br>
+    <small *ngIf="todoForm.get('todo').invalid && todoForm.get('todo').touched">*Todo is a required field</small>
+</div>

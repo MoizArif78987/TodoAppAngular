@@ -1,0 +1,42 @@
+*{
+    --button-blue: rgb(55, 192, 255);
+    --light-bg:rgb(176, 116, 245);
+}
+
+.AddTodoForm{
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+form{
+    border: 8px solid var(--light-bg);
+    border-radius: 5px;
+}
+input{
+    min-width: 200px;
+}
+button, input{
+    padding: 10px;
+    font-size: 1.5rem;
+}
+button{
+    background-color: var(--button-blue);
+    color: white;
+    border: 1px solid var(--button-blue);
+    cursor: pointer;
+    padding-left: 30px;
+    padding-right: 30px;
+    text-transform: uppercase;
+}
+input:focus{
+    outline-color: var(--button-blue);
+    outline-style: ridge;
+}
+input.ng-touched.ng-invalid{
+    border: 2px solid red;
+}
+small{
+    color: red;
+}
