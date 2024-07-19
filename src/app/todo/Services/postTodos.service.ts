@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map, tap } from 'rxjs/operators'
+import { catchError } from 'rxjs/operators'
 import { ErrorDetectionService } from './error-detection.service';
 
 @Injectable({

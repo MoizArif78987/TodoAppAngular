@@ -30,6 +30,10 @@ button{
     padding-right: 30px;
     text-transform: uppercase;
 }
+button:disabled{
+    opacity: 0.5;
+    cursor: default;
+}
 input:focus{
     outline-color: var(--button-blue);
     outline-style: ridge;

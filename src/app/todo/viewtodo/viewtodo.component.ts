@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { GetService } from '../Services/getTodos.service';
+import { Todo } from '../Models/todo.model';
 
 @Component({
   selector: 'app-viewtodo',
@@ -6,11 +8,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./viewtodo.component.css']
 })
 export class ViewtodoComponent implements OnInit {
-  todoItems =["I will pray 5 times", "I will make an angular app", "I will kill Thanos"]
+  todoItems :Todo[]
 
-  constructor() { }
+  constructor(private getService:GetService) { }
 
   ngOnInit(): void {
+    this.getService.getTodos().subscribe((data)=>{
+      this.todoItems= data
+    })
   }
 
 }
