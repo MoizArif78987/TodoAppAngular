@@ -42,28 +42,36 @@ export class AddtodoComponent implements OnInit {
     this.getService.getTodos().subscribe(data => this.array = data)
   }
   isUnique(data: FormControl): { [key: string]: boolean } {
-    if (this.array.some(current => current.todo.toUpperCase() === data.value.toUpperCase())) {
-      this.disable=true
-      return {IsNotUnique: true};
+    if (this.array.some(current => current.todo.toUpperCase() === data.value.trim().toUpperCase())) {
+      this.disable = true
+      return { IsNotUnique: true };
     }
-    // console.log(data)
     return null;
   }
   OnAddClick() {
-    this.postService.createTodo(this.todoForm.value).subscribe((data) => {
-      if (data.type === HttpEventType.Sent) {
-        this.commmunication.sendTodo(this.todoForm.value)
-        this.todoForm.reset()
-        this.disable = true
+    let trimValue = this.todoForm.get('todo').value.trim();
+    if (trimValue !== "") {
+      this.todoForm.patchValue({
+        todo: trimValue
+      });
+      this.postService.createTodo(this.todoForm.value).subscribe((data) => {
+        if (data.type === HttpEventType.Sent) {
+          this.commmunication.sendTodo(this.todoForm.value)
+          this.todoForm.reset()
+          this.disable = true
+        }
+        if (data.type === HttpEventType.Response) {
+          this.confirmation.sendConfirmation("recieved")
+        }
+      }, (error) => {
+        this.error = error
+        console.log(this.error)
+        this.confirmation.sendConfirmation("error")
       }
-      if (data.type === HttpEventType.Response) {
-        this.confirmation.sendConfirmation("recieved")
-      }
-    }, (error) => {
-      this.error = error
-      console.log(this.error)
-      this.confirmation.sendConfirmation("error")
+      )
     }
-    )
+    else{
+      this.error="Invalid entry"
+    }
   }
 }
