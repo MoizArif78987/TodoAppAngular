@@ -17,6 +17,9 @@ export class ViewtodoComponent implements OnInit {
   todoItems: Todo[] = [];
   disableDelete = false;
   checklist: FormGroup;
+  successful: number = 0;
+  failed: number = 0;
+  message: string = '';
 
   constructor(
     private getService: GetService,
@@ -54,8 +57,7 @@ export class ViewtodoComponent implements OnInit {
     const todosControl = this.checklist.get('checkedTodos') as FormArray;
     todosControl.clear();
     todos.forEach(todo => {
-      if(!todo.checked)
-      {
+      if (!todo.checked) {
         todosControl.push(this.formBuilder.control(todo));
       }
     });
@@ -102,7 +104,7 @@ export class ViewtodoComponent implements OnInit {
     });
   }
 
-  OnSave(){
+  OnSave() {
     const todosControl = this.checklist.get('checkedTodos') as FormArray;
     const todosControlValue = todosControl.value;
     let updatedTodos = this.todoItems.map(todo => {
@@ -112,9 +114,31 @@ export class ViewtodoComponent implements OnInit {
         checked: !isChecked
       };
     });
-    updatedTodos.forEach((value)=>{
-      this.putService.UpdateTodo(value.key, value.checked).subscribe(data=>console.log())
+    updatedTodos.forEach((value) => {
+      this.putService.UpdateTodo(value.key, value.checked).subscribe((data) => {
+        if (data.type === HttpEventType.Response) {
+          if (data.status === 200) {
+            this.successful += 1;
+          }
+          else {
+            this.failed += 1;
+          }
+        }
+      },(error)=>{
+        this.failed += 1;
+      })
     })
+    this.showMessage()
+  }
+  showMessage() {
+    setTimeout(() => {
+      this.message = `${this.successful} changes saved successfully, ${this.failed} failed`
+    }, 1000)
+    setTimeout(()=>{
+      this.successful=0;
+      this.failed=0;
+      this.message=''
+    }, 4000)
   }
   trackByIndex(index: number, item: Todo): number {
     return index;

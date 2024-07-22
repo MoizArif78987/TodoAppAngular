@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, delay, map, retryWhen, scan } from 'rxjs/operators'
+import { catchError, delay, map, retryWhen, scan, shareReplay } from 'rxjs/operators'
 import { ErrorDetectionService } from './error-detection.service';
 
 @Injectable({
@@ -32,6 +32,7 @@ export class GetService{
                 users.push({...data[key], key:key})
             }
             return users
-        }))
+        })
+      )
     }
 }
