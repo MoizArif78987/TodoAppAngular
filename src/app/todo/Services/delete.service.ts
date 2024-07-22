@@ -8,11 +8,12 @@ import { Todo } from '../Models/todo.model';
 @Injectable({
     providedIn: 'root'
 })
-export class PostService {
+export class DeleteService {
     constructor(private http: HttpClient, private errorService: ErrorDetectionService) { }
 
-    createTodo(data: Todo): Observable<any> {
-        return this.http.post('https://angular-training-a6f1b-default-rtdb.firebaseio.com/todos.json', data, { observe: 'events' })
+    delete(key: string): Observable<any> {
+        return this.http.delete(`https://angular-training-a6f1b-default-rtdb.firebaseio.com/todos/${key}.json`,
+            { observe: 'events' })
             .pipe(
                 catchError(this.errorService.handleError)
             );

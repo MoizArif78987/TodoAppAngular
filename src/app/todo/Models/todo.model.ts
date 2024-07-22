@@ -1,4 +1,5 @@
 export interface Todo{
     todo:string,
-    key?:string
+    key?:string,
+    checked?:boolean
 }

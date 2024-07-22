@@ -1,4 +1,4 @@
-*{
+/* *{
     --button-blue: rgb(55, 192, 255);
     --light-bg:rgb(176, 116, 245);
 }
@@ -9,13 +9,17 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 50%;
+    margin: 0 auto;
 }
 form{
     border: 8px solid var(--light-bg);
     border-radius: 5px;
+    width:100%
 }
 input{
     min-width: 200px;
+    width: 83.6%;
 }
 button, input{
     padding: 10px;
@@ -43,4 +47,10 @@ input.ng-touched.ng-invalid{
 }
 small{
     color: red;
+}*/
+
+form{
+    --light-bg:rgb(176, 116, 245);
+    border-radius: 15px;
+    border: 8px solid var(--light-bg);
 }
