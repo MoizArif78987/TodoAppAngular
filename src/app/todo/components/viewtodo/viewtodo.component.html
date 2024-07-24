@@ -1,0 +1,32 @@
+<div class="alert" role="alert" *ngIf="message" [ngClass]="{'alert-success': successful>failed ,'alert-danger': successful<failed}" >
+  {{message}}
+</div>
+
+
+<div class="container">
+  <form [formGroup]="checklist" class="my-2">
+    <div formArrayName="checkedTodos">
+      <div *ngFor="let item of todoItems; let i = index; trackBy: trackByIndex"
+        class="todoItem d-flex align-items-center justify-content-between p-2 mb-2 border rounded flex-wrap">
+        <div class="form-check d-flex align-items-center">
+          <input class="form-check-input me-2" type="checkbox" id="todoCheckbox{{item.key}}"
+            (change)="changeInCheckedTodos(i)" [checked]="item.checked" #Checkbox>
+          <label class="form-check-label mb-0" for="todoCheckbox{{item.key}}" [ngClass]="{'checked': Checkbox.checked}">
+            {{item.todo}}
+          </label>
+        </div>
+        <button type="button" class="btn btn-danger btn-sm" (click)="OnDelete(item.key, i)" [disabled]="disableDelete">
+          <span aria-hidden="true">🗑</span>
+        </button>
+      </div>
+    </div>
+    <ng-container *ngIf="todoItems.length === 0; else submitTemplate">
+      <h1>No Todo Items added yet</h1>
+    </ng-container>
+    <ng-template #submitTemplate>
+      <div class="d-grid gap-2 col-6 mx-auto">
+        <button class="btn btn-success btn-lg" type="button" (click)="OnSave()">Save</button>
+      </div>
+    </ng-template>
+  </form>
+</div>

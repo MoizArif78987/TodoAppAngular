@@ -1,0 +1,26 @@
+<div class="container">
+    <form [formGroup]="todoForm" (ngSubmit)="OnAddClick()" class="my-3">
+        <div class="row g-2">
+            <div class="col-12 col-md-10 form-floating">
+                <input type="text" placeholder="" formControlName="todo"
+                    class="form-control form-control-lg"
+                    [ngClass]="{'is-invalid': (todoForm.get('todo').invalid && todoForm.get('todo').touched) || error}" id="floatingInput">
+                    <label for="floatingInput">Whats on your mind today?</label>
+            </div>
+            <div class="col-12 col-md-2 d-grid">
+                <button type="submit" [disabled]="disable || todoForm.get('todo').errors?.IsNotUnique" class="btn btn-primary btn-lg">Add</button>
+            </div>
+        </div>
+        <div id="validationServer03Feedback" class="invalid-feedback d-block mt-2"
+            *ngIf="todoForm.get('todo').invalid && todoForm.get('todo').touched">
+            *Todo is a required field
+        </div>
+        <div id="validationServer03Feedback" class="invalid-feedback d-block mt-2" *ngIf="error!==undefined">
+            {{error}}
+        </div>
+        <div id="validationServer03Feedback" class="invalid-feedback d-block mt-2" *ngIf="todoForm.get('todo').errors?.IsNotUnique">
+            This todo already exists
+        </div>
+    </form>
+    <br>
+</div>
