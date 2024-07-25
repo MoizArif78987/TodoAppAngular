@@ -1,5 +1,6 @@
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Todo } from '../../Models/todo.model';
 
 export class AddCheckedPropertyInterceptor implements HttpInterceptor {
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -12,7 +13,7 @@ export class AddCheckedPropertyInterceptor implements HttpInterceptor {
         return next.handle(req);
     }
 
-    private addCheckedProperty(body: any): any {
+    private addCheckedProperty(body: Todo): Todo {
         return {
             ...body,
             checked: false

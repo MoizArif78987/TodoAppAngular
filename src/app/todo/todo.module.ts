@@ -4,8 +4,9 @@ import { AddtodoComponent } from './components/addtodo/addtodo.component';
 import { ViewtodoComponent } from './components/viewtodo/viewtodo.component';
 import { ContainerComponent } from './container.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {  HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { AddCheckedPropertyInterceptor } from './Services/addChecked-interceptor.service';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { AddCheckedPropertyInterceptor } from './Services/interceptors/addChecked-interceptor.service';
+import { HttpErrorInterceptor } from './Services/interceptors/error-interceptor.service';
 
 
 
@@ -21,10 +22,15 @@ import { AddCheckedPropertyInterceptor } from './Services/addChecked-interceptor
     FormsModule,
     HttpClientModule
   ],
-  providers:[
+  providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AddCheckedPropertyInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
       multi: true
     }
   ]

@@ -1,19 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
-import { GetService } from '../../Services/getTodos.service';
 import { Todo } from '../../Models/todo.model';
 import { CommunicationService } from '../../Services/Communication.service';
 import { ConfirmationService } from '../../Services/Confirmation.service';
-import { DeleteService } from '../../Services/delete.service';
 import { HttpEventType } from '@angular/common/http';
-import { PutService } from '../../Services/put.service';
+import { CrudService } from '../../Services/crud.service';
+import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-viewtodo',
+  selector: 'app-viewtodolist',
   templateUrl: './viewtodo.component.html',
   styleUrls: ['./viewtodo.component.css']
 })
-export class ViewtodoComponent implements OnInit {
+export class ViewtodoComponent implements OnInit, OnDestroy {
   todoItems: Todo[] = [];
   disableDelete = false;
   checklist: FormGroup;
@@ -21,12 +20,16 @@ export class ViewtodoComponent implements OnInit {
   failed: number = 0;
   message: string = '';
 
+  CommunicationSubscriber: Subscription
+  ConfirmationSubscriber: Subscription
+  GetDataSubscriber: Subscription
+  OnDeleteSubscriber: Subscription
+  UpdateSubscriber: Subscription
+
   constructor(
-    private getService: GetService,
     private communication: CommunicationService,
     private confirmation: ConfirmationService,
-    private deleteService: DeleteService,
-    private putService: PutService,
+    private crudService: CrudService,
     private formBuilder: FormBuilder
   ) { }
 
@@ -36,18 +39,26 @@ export class ViewtodoComponent implements OnInit {
     });
 
     this.getdata();
-    this.communication.todoSubject.subscribe((data) => {
+    this.CommunicationSubscriber = this.communication.todoSubject.subscribe((data) => {
       const todo = data;
       this.todoItems.push(todo);
       this.addTodoToFormArray(todo);
     });
-    this.confirmation.confirmationSubject.subscribe((data) => {
+    this.ConfirmationSubscriber = this.confirmation.confirmationSubject.subscribe((data) => {
       this.getdata();
     });
   }
 
+  ngOnDestroy(): void {
+    this.CommunicationSubscriber.unsubscribe()
+    this.ConfirmationSubscriber.unsubscribe()
+    this.GetDataSubscriber.unsubscribe()
+    this.OnDeleteSubscriber.unsubscribe()
+    this.UpdateSubscriber.unsubscribe()
+  }
+
   getdata(): void {
-    this.getService.getTodos().subscribe((data) => {
+    this.GetDataSubscriber = this.crudService.getTodos().subscribe((data) => {
       this.todoItems = data;
       this.setTodosInFormArray(data);
     });
@@ -90,7 +101,7 @@ export class ViewtodoComponent implements OnInit {
   }
 
   OnDelete(key: string, i: number): void {
-    this.deleteService.delete(key).subscribe((data) => {
+    this.OnDeleteSubscriber = this.crudService.delete(key).subscribe((data) => {
       if (data.type === HttpEventType.Sent) {
         this.disableDelete = true;
       }
@@ -115,7 +126,7 @@ export class ViewtodoComponent implements OnInit {
       };
     });
     updatedTodos.forEach((value) => {
-      this.putService.UpdateTodo(value.key, value.checked).subscribe((data) => {
+    this.UpdateSubscriber =  this.crudService.updateTodo(value.key, value.checked).subscribe((data) => {
         if (data.type === HttpEventType.Response) {
           if (data.status === 200) {
             this.successful += 1;
@@ -124,7 +135,7 @@ export class ViewtodoComponent implements OnInit {
             this.failed += 1;
           }
         }
-      },(error)=>{
+      }, (error) => {
         this.failed += 1;
       })
     })
@@ -134,10 +145,10 @@ export class ViewtodoComponent implements OnInit {
     setTimeout(() => {
       this.message = `${this.successful} changes saved successfully, ${this.failed} failed`
     }, 1000)
-    setTimeout(()=>{
-      this.successful=0;
-      this.failed=0;
-      this.message=''
+    setTimeout(() => {
+      this.successful = 0;
+      this.failed = 0;
+      this.message = ''
     }, 4000)
   }
   trackByIndex(index: number, item: Todo): number {

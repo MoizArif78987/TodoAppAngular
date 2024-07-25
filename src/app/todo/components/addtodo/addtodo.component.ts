@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { PostService } from '../../Services/postTodos.service';
 import { CommunicationService } from '../../Services/Communication.service';
 import { HttpEventType } from '@angular/common/http';
 import { ConfirmationService } from '../../Services/Confirmation.service';
-import { GetService } from '../../Services/getTodos.service';
+import { CrudService } from '../../Services/crud.service';
+import { Subscription } from 'rxjs';
+
 
 
 @Component({
@@ -12,14 +13,18 @@ import { GetService } from '../../Services/getTodos.service';
   templateUrl: './addtodo.component.html',
   styleUrls: ['./addtodo.component.css']
 })
-export class AddtodoComponent implements OnInit {
+export class AddtodoComponent implements OnInit, OnDestroy {
   error: string;
   todoForm: FormGroup;
   disable: boolean = true
   array = [];
+
+  GetDataSubscriber: Subscription
+  AddTodoSubscriber: Subscription
+  ValueChangeSubscriber: Subscription
+
   constructor(private formBuilder: FormBuilder,
-    private postService: PostService,
-    private getService: GetService,
+    private crudService: CrudService,
     private communication: CommunicationService,
     private confirmation: ConfirmationService) { }
 
@@ -28,7 +33,7 @@ export class AddtodoComponent implements OnInit {
     this.todoForm = this.formBuilder.group({
       todo: [null, [Validators.required, this.isUnique.bind(this)]]
     })
-    this.todoForm.valueChanges.subscribe((data) => {
+    this.ValueChangeSubscriber = this.todoForm.valueChanges.subscribe((data) => {
       if (data.todo !== '') {
         this.disable = false
       }
@@ -38,8 +43,13 @@ export class AddtodoComponent implements OnInit {
     }
     )
   }
+  ngOnDestroy(): void {
+    this.GetDataSubscriber.unsubscribe()
+    this.AddTodoSubscriber.unsubscribe()
+    this.ValueChangeSubscriber.unsubscribe()
+  }
   getdata() {
-    this.getService.getTodos().subscribe(data => this.array = data)
+    this.GetDataSubscriber= this.crudService.getTodos().subscribe(data => this.array = data)
   }
   isUnique(data: FormControl): { [key: string]: boolean } {
     if (this.array.some(current => current.todo.toUpperCase() === data.value?.trim().toUpperCase())) {
@@ -55,7 +65,7 @@ export class AddtodoComponent implements OnInit {
       this.todoForm.patchValue({
         todo: trimValue
       });
-      this.postService.createTodo(this.todoForm.value).subscribe((data) => {
+      this.AddTodoSubscriber = this.crudService.createTodo(this.todoForm.value).subscribe((data) => {
         if (data.type === HttpEventType.Sent) {
           this.communication.sendTodo(this.todoForm.value);
           this.todoForm.reset();
